@@ -3,6 +3,7 @@ package main.entity;
 import main.GamePanel;
 
 import java.awt.*;
+import java.util.List;
 
 public class Entity {
 
@@ -67,6 +68,10 @@ public class Entity {
     }
 
     public void update() {
+
+    }
+
+    public void searchCollision(List<Entity> entities, GamePanel gamePanel){
 
     }
 
@@ -180,6 +185,42 @@ public class Entity {
         leftCollision = false;
         leftDownCollision = false;
         rightDownCollision = false;
+    }
+
+    protected static Boolean checkCollisionBetweenEntities(Entity item, Entity entity) {
+        int wallLeft = entity.getX();
+        int wallRight = entity.getX() + 24;
+        int wallBottom = entity.getY();
+        int wallTop = entity.getY() - 24;
+        //PLAYER POSITIONS
+        int playerLeft = item.getX();
+        int playerRight = item.getX() + 24;
+        int playerBottom = item.getY();
+        int playerTop = item.getY() - 24;
+
+        Boolean result =false;
+
+        if (wallBottom == playerTop && wallTop < playerTop && wallRight > playerLeft && wallLeft < playerRight) {
+            //System.out.println("up collision");
+            item.setUpCollision(true);
+            result = true;
+        }
+        if (wallTop == playerBottom && wallBottom > playerTop && wallRight > playerLeft && wallLeft < playerRight) {
+            //System.out.println("down collision");
+            item.setDownCollision(true);
+            result = true;
+        }
+        if (wallRight >= playerLeft && wallLeft < playerRight && wallBottom > playerTop && wallTop < playerBottom) {
+            //System.out.println("left collision");
+            item.setLeftCollision(true);
+            result = true;
+        }
+        if (wallLeft <= playerRight && wallRight > playerRight && wallBottom > playerTop && wallTop < playerBottom) {
+            //System.out.println("right collision");
+            item.setRightCollision(true);
+            result = true;
+        }
+        return result;
     }
 
 }

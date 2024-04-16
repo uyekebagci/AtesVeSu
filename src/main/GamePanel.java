@@ -37,11 +37,14 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Entity> entitiesWillAdd = new ArrayList<>();
     public List<Entity> entitiesWillRemove = new ArrayList<>();
 
-    Monsters monster = new Monsters(this,460, 590 - tileSize/2, new Rectangle(tileSize/2, tileSize/2),Color.ORANGE,10);
+    Monsters monsterBLUE = new Monsters(this,460, 590 - tileSize/2, new Rectangle(tileSize/2, tileSize/2),Color.BLUE,10, 5);
+
+    Monsters monsterRED = new Monsters(this,260, 590 - tileSize/2, new Rectangle(tileSize/2, tileSize/2),Color.RED,10, 5);
 
     public GamePanel() {
         entities.add(player);
-        entities.add(monster);
+        entities.add(monsterBLUE);
+        entities.add(monsterRED);
         //entities.add(new Entity(400,400,new Rectangle(tileSize/2,tileSize/2),Color.GRAY));
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -73,11 +76,20 @@ public class GamePanel extends JPanel implements Runnable {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                //gravity();
-                update();
-                repaint();
-                delta--;
-                drawCount++;
+                try {
+                    update();
+                    repaint();
+                    delta--;
+                    drawCount++;
+                }catch (RuntimeException e){
+//                    e.printStackTrace();
+                    entities.clear();
+                    entities.add(new Player(this, 76, 720, new Rectangle(tileSize / 2, tileSize / 2), Color.BLUE, keyH, 1));
+                    entities.add(new Monsters(this,460, 590 - tileSize/2, new Rectangle(tileSize/2, tileSize/2),Color.BLUE,10, 4));
+                    entities.add(new Monsters(this,260, 590 - tileSize/2, new Rectangle(tileSize/2, tileSize/2),Color.RED,10, 5));
+                    createWalls();
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -91,13 +103,23 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void createWalls() {
         int x = 400, y = 400;
-        int size = tileSize / 2;
-        for (int i = 0; i < 21; i++) {
-            entities.add(new Entity(x + (i * (size / 2)), 400, new Rectangle(size, size), Color.WHITE, 2));
+        int size = tileSize / 2; // 24
+        //MAP PLATFORMS
+        for (int i = 0; i < 50; i++) {
+            entities.add(new Entity(24 + (i * (size / 2)), 645, new Rectangle(size, size), Color.WHITE, 2));
         }
-        for (int i = 0; i < 80; i++) {
-            entities.add(new Entity(x -376 + (i * (size / 2)), 645, new Rectangle(size, size), Color.WHITE, 2));
+        for (int i = 0; i < 25; i++) {
+            entities.add(new Entity(1104 - (i * (size / 2)), 645, new Rectangle(size, size), Color.WHITE, 2));
         }
+        for (int i = 0; i < 60; i++){
+            entities.add(new Entity(1104 - (i * size / 2), 530, new Rectangle(size, size), Color.WHITE,2));
+            if (i < 20){
+                entities.add(new Entity(24 + (i * size / 2), 530, new Rectangle(size, size), Color.WHITE,2));
+            }
+        }
+
+
+
         //top and bottom
         for (int i = 0; i < screenWidth; i++) {
             entities.add(new Entity(i, 0, new Rectangle(size, size), Color.WHITE, 2));
@@ -105,12 +127,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         // left and right walls
         for (int i = 0; i < screenHeight; i++) {
+            //left
             entities.add(new Entity(0, 24 + i, new Rectangle(size, size), Color.WHITE, 2));
+            //right
             entities.add(new Entity(1128, i + 24, new Rectangle(size, size), Color.WHITE, 2));
         }
-
-        entities.add(new Entity(x, 400 - (size / 2), new Rectangle(size, size), Color.WHITE, 2));
-        entities.add(new Entity(x, 400 - (size), new Rectangle(size, size), Color.WHITE, 2));
     }
 
     public void update() {
@@ -119,8 +140,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if (keyH.player_2){
             player.setColor(Color.RED);
-
-
         }
         if (keyH.player_3){
             player.setColor(Color.MAGENTA);

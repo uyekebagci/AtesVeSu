@@ -29,7 +29,7 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_D) {
             rightPressed = true;
         }
-        if (code == KeyEvent.VK_SPACE){
+        if (code == KeyEvent.VK_SPACE && !space){
             space = true;
         }
         if (code == KeyEvent.VK_1 && !player_1){
